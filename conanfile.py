@@ -133,8 +133,11 @@ class ODBRecipe(ConanFile):
             raise ValueError(f"Unsupported os: {self.settings.os}")
 
     def package(self):
-        copy(self, "*", os.path.join(self.build_folder, "libodb-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
-        copy(self, "*", os.path.join(self.build_folder, "libodb-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
-        copy(self, "*", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
-        copy(self, "*", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
-        copy(self, "*", os.path.join(self.source_folder, "odb-2.4.0-i686-windows", "bin"), os.path.join(self.package_folder, "bin"))
+        if self.settings.os == "Windows":
+            copy(self, "*.dll", os.path.join(self.build_folder, "libodb-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
+            copy(self, "*.lib", os.path.join(self.build_folder, "libodb-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
+            copy(self, "*.dll", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
+            copy(self, "*.lib", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
+            copy(self, "*.exe", os.path.join(self.source_folder, "odb-2.4.0-i686-windows", "bin"), os.path.join(self.package_folder, "bin"))
+        else:
+            raise ValueError(f"Unsupported os: {self.settings.os}")
