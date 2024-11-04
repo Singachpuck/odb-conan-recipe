@@ -1,0 +1,572 @@
+diff --git a/libodb-pgsql-vc17.sln b/libodb-pgsql-vc17.sln
+new file mode 100644
+index 0000000..42f189e
+--- /dev/null
++++ b/libodb-pgsql-vc17.sln
+@@ -0,0 +1,25 @@
++Microsoft Visual Studio Solution File, Format Version 12.00
++# Visual Studio 2022
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libodb-pgsql", "odb\pgsql\libodb-pgsql-vc17.vcxproj", "{B6185C00-39EC-4429-B774-164B4397B995}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|Win32 = Debug|Win32
++		Debug|x64 = Debug|x64
++		Release|Win32 = Release|Win32
++		Release|x64 = Release|x64
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{B6185C00-39EC-4429-B774-164B4397B995}.Debug|Win32.ActiveCfg = Debug|Win32
++		{B6185C00-39EC-4429-B774-164B4397B995}.Debug|Win32.Build.0 = Debug|Win32
++		{B6185C00-39EC-4429-B774-164B4397B995}.Debug|x64.ActiveCfg = Debug|x64
++		{B6185C00-39EC-4429-B774-164B4397B995}.Debug|x64.Build.0 = Debug|x64
++		{B6185C00-39EC-4429-B774-164B4397B995}.Release|Win32.ActiveCfg = Release|Win32
++		{B6185C00-39EC-4429-B774-164B4397B995}.Release|Win32.Build.0 = Release|Win32
++		{B6185C00-39EC-4429-B774-164B4397B995}.Release|x64.ActiveCfg = Release|x64
++		{B6185C00-39EC-4429-B774-164B4397B995}.Release|x64.Build.0 = Release|x64
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal
+diff --git a/odb/pgsql/libodb-pgsql-vc17.vcxproj b/odb/pgsql/libodb-pgsql-vc17.vcxproj
+new file mode 100644
+index 0000000..03320a0
+--- /dev/null
++++ b/odb/pgsql/libodb-pgsql-vc17.vcxproj
+@@ -0,0 +1,272 @@
++<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <ProjectGuid>{B6185C00-39EC-4429-B774-164B4397B995}</ProjectGuid>
++    <Keyword>Win32Proj</Keyword>
++    <RootNamespace>libodb-pgsql</RootNamespace>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v143</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v143</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <LinkIncremental>true</LinkIncremental>
++    <OutDir>..\..\bin\</OutDir>
++    <TargetName>odb-pgsql-d-2.4-vc17</TargetName>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <LinkIncremental>true</LinkIncremental>
++    <OutDir>..\..\bin64\</OutDir>
++    <TargetName>odb-pgsql-d-2.4-vc17</TargetName>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <LinkIncremental>false</LinkIncremental>
++    <OutDir>..\..\bin\</OutDir>
++    <TargetName>odb-pgsql-2.4-vc17</TargetName>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <LinkIncremental>false</LinkIncremental>
++    <OutDir>..\..\bin64\</OutDir>
++    <TargetName>odb-pgsql-2.4-vc17</TargetName>
++    <IncludePath>{{includePath}}</IncludePath>
++    <ExecutablePath>{{executablePath}}</ExecutablePath>
++    <LibraryPath>{{libraryPath}}</LibraryPath> 
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <ClCompile>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBODB_PGSQL_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <AdditionalIncludeDirectories>..\..</AdditionalIncludeDirectories>
++      <DisableSpecificWarnings>4355;4800;4290;4251;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
++      <SDLCheck>true</SDLCheck>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>odb-d.lib;libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <OutputFile>$(TargetPath)</OutputFile>
++      <ImportLibrary>..\..\lib\odb-pgsql-d.lib</ImportLibrary>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBODB_PGSQL_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <AdditionalIncludeDirectories>..\..</AdditionalIncludeDirectories>
++      <DisableSpecificWarnings>4355;4800;4290;4251;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
++      <SDLCheck>true</SDLCheck>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>odb-d.lib;libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <OutputFile>$(TargetPath)</OutputFile>
++      <ImportLibrary>..\..\lib64\odb-pgsql-d.lib</ImportLibrary>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <Optimization>MaxSpeed</Optimization>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBODB_PGSQL_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <AdditionalIncludeDirectories>..\..</AdditionalIncludeDirectories>
++      <DisableSpecificWarnings>4355;4800;4290;4251;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
++      <SDLCheck>true</SDLCheck>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>odb.lib;libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <OutputFile>$(TargetPath)</OutputFile>
++      <ImportLibrary>..\..\lib\odb-pgsql.lib</ImportLibrary>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <PrecompiledHeader>
++      </PrecompiledHeader>
++      <Optimization>MaxSpeed</Optimization>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBODB_PGSQL_DYNAMIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <AdditionalIncludeDirectories>..\..</AdditionalIncludeDirectories>
++      <DisableSpecificWarnings>4355;4800;4290;4251;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
++      <SDLCheck>true</SDLCheck>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>odb.lib;libpq.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <OutputFile>$(TargetPath)</OutputFile>
++      <ImportLibrary>..\..\lib64\odb-pgsql.lib</ImportLibrary>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemGroup>
++    <ClInclude Include="auto-handle.hxx" />
++    <ClInclude Include="binding.hxx" />
++    <ClInclude Include="connection-factory.hxx" />
++    <ClInclude Include="connection.hxx" />
++    <ClInclude Include="connection.ixx" />
++    <ClInclude Include="container-statements.hxx" />
++    <ClInclude Include="container-statements.txx" />
++    <ClInclude Include="database.hxx" />
++    <ClInclude Include="database.ixx" />
++    <ClInclude Include="details\config.hxx" />
++    <ClInclude Include="details\conversion.hxx" />
++    <ClInclude Include="details\endian-traits.hxx" />
++    <ClInclude Include="details\export.hxx" />
++    <ClInclude Include="details\options.hxx" />
++    <ClInclude Include="details\options.ixx" />
++    <ClInclude Include="error.hxx" />
++    <ClInclude Include="error.ixx" />
++    <ClInclude Include="exceptions.hxx" />
++    <ClInclude Include="forward.hxx" />
++    <ClInclude Include="no-id-object-result.hxx" />
++    <ClInclude Include="no-id-object-result.txx" />
++    <ClInclude Include="no-id-object-statements.hxx" />
++    <ClInclude Include="no-id-object-statements.txx" />
++    <ClInclude Include="pgsql-fwd.hxx" />
++    <ClInclude Include="pgsql-oid.hxx" />
++    <ClInclude Include="pgsql-types.hxx" />
++    <ClInclude Include="polymorphic-object-result.hxx" />
++    <ClInclude Include="polymorphic-object-result.txx" />
++    <ClInclude Include="polymorphic-object-statements.hxx" />
++    <ClInclude Include="polymorphic-object-statements.txx" />
++    <ClInclude Include="prepared-query.hxx" />
++    <ClInclude Include="query-dynamic.hxx" />
++    <ClInclude Include="query-dynamic.ixx" />
++    <ClInclude Include="query-dynamic.txx" />
++    <ClInclude Include="query.hxx" />
++    <ClInclude Include="query.ixx" />
++    <ClInclude Include="query.txx" />
++    <ClInclude Include="section-statements.hxx" />
++    <ClInclude Include="section-statements.txx" />
++    <ClInclude Include="simple-object-result.hxx" />
++    <ClInclude Include="simple-object-result.txx" />
++    <ClInclude Include="simple-object-statements.hxx" />
++    <ClInclude Include="simple-object-statements.ixx" />
++    <ClInclude Include="simple-object-statements.txx" />
++    <ClInclude Include="statement-cache.hxx" />
++    <ClInclude Include="statement-cache.txx" />
++    <ClInclude Include="statement.hxx" />
++    <ClInclude Include="statements-base.hxx" />
++    <ClInclude Include="tracer.hxx" />
++    <ClInclude Include="traits-calls.hxx" />
++    <ClInclude Include="traits.hxx" />
++    <ClInclude Include="transaction-impl.hxx" />
++    <ClInclude Include="transaction-impl.ixx" />
++    <ClInclude Include="transaction.hxx" />
++    <ClInclude Include="transaction.ixx" />
++    <ClInclude Include="version.hxx" />
++    <ClInclude Include="view-result.hxx" />
++    <ClInclude Include="view-result.txx" />
++    <ClInclude Include="view-statements.hxx" />
++    <ClInclude Include="view-statements.txx" />
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="auto-handle.cxx" />
++    <ClCompile Include="connection.cxx" />
++    <ClCompile Include="connection-factory.cxx" />
++    <ClCompile Include="database.cxx" />
++    <ClCompile Include="error.cxx" />
++    <ClCompile Include="exceptions.cxx" />
++    <ClCompile Include="prepared-query.cxx" />
++    <ClCompile Include="query.cxx" />
++    <ClCompile Include="query-dynamic.cxx" />
++    <ClCompile Include="query-const-expr.cxx" />
++    <ClCompile Include="simple-object-statements.cxx" />
++    <ClCompile Include="statement.cxx" />
++    <ClCompile Include="statements-base.cxx" />
++    <ClCompile Include="tracer.cxx" />
++    <ClCompile Include="traits.cxx" />
++    <ClCompile Include="transaction.cxx" />
++    <ClCompile Include="transaction-impl.cxx" />
++    <ClCompile Include="details\endian-traits.cxx">
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\details\</ObjectFileName>
++    </ClCompile>
++    <ClCompile Include="details\options.cxx">
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\details\</ObjectFileName>
++      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\details\</ObjectFileName>
++    </ClCompile>
++  </ItemGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff --git a/odb/pgsql/libodb-pgsql-vc17.vcxproj.filters b/odb/pgsql/libodb-pgsql-vc17.vcxproj.filters
+new file mode 100644
+index 0000000..8f5a659
+--- /dev/null
++++ b/odb/pgsql/libodb-pgsql-vc17.vcxproj.filters
+@@ -0,0 +1,256 @@
++<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{A070BD3A-62AD-4ED5-8080-860954BF9EF8}</UniqueIdentifier>
++      <Extensions>cxx</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{8586465A-41C6-4A76-B0AA-256E10243DC2}</UniqueIdentifier>
++      <Extensions>h;hxx;ixx;txx</Extensions>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++
++    <ClInclude Include="auto-handle.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="binding.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="connection-factory.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="connection.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="connection.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="container-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="container-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="database.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="database.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\config.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\conversion.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\endian-traits.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\export.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\options.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="details\options.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="error.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="error.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="exceptions.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="forward.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="no-id-object-result.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="no-id-object-result.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="no-id-object-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="no-id-object-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="pgsql-fwd.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="pgsql-oid.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="pgsql-types.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="polymorphic-object-result.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="polymorphic-object-result.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="polymorphic-object-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="polymorphic-object-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="prepared-query.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query-dynamic.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query-dynamic.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query-dynamic.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="query.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="section-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="section-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="simple-object-result.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="simple-object-result.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="simple-object-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="simple-object-statements.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="simple-object-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="statement-cache.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="statement-cache.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="statement.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="statements-base.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="tracer.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="traits-calls.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="traits.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="transaction-impl.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="transaction-impl.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="transaction.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="transaction.ixx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="version.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="view-result.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="view-result.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="view-statements.hxx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="view-statements.txx">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++  </ItemGroup>
++  <ItemGroup>
++
++    <ClCompile Include="auto-handle.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="connection.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="connection-factory.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="database.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="error.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="exceptions.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="prepared-query.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="query.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="query-dynamic.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="query-const-expr.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="simple-object-statements.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="statement.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="statements-base.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="tracer.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="traits.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="transaction.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="transaction-impl.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="details\endian-traits.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="details\options.cxx">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++</Project>
