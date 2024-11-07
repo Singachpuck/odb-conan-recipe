@@ -1,9 +1,8 @@
 import subprocess, os
 
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.env import Environment
-from conan.tools.files import get, patch, copy, replace_in_file
+from conan.tools.files import get, patch, copy, replace_in_file, rmdir, rm
 from conan.tools.microsoft import MSBuild
 
 def get_vs_installation_path():
@@ -38,7 +37,14 @@ class PathBuilder:
     def build(self):
         return self.full_path
 
-
+# TODO: Add channel and user
+# TODO: Adapt to Linux
+# TODO: Adapt to Visual Studio 2019
+# TODO: Add dynamic/static library support
+# TODO: Add configurable toolchain in the patches
+# TODO: Adapt to different db types via options
+# TODO: Adapt to different versions
+# TODO: Add with compiler option
 class ODBRecipe(ConanFile):
     name = "odb"
     version = "2.4.0"
@@ -53,10 +59,14 @@ class ODBRecipe(ConanFile):
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    default_options = {"shared": True, "fPIC": True}
 
     # Copy sources to the recipe
-    exports_sources = "patches*"
+    exports_sources = "patches*", "cmake*"
+
+    @property
+    def _cmake_install_base_path(self):
+        return os.path.join("lib", "cmake", "odb")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -70,6 +80,7 @@ class ODBRecipe(ConanFile):
 
         libodb_pgsql_path = os.path.join(self.source_folder, "libodb-pgsql-2.4.0")
         libodb_path = os.path.join(self.source_folder, "libodb-2.4.0")
+        odb_path = os.path.join(self.source_folder, "odb-2.4.0-i686-windows")
         patch(
             self,
             base_path=libodb_path,
@@ -80,6 +91,12 @@ class ODBRecipe(ConanFile):
             self,
             base_path=libodb_pgsql_path,
             patch_file="patches/retarget-pgsql-v143.patch"
+        )
+
+        patch(
+            self,
+            base_path=odb_path,
+            patch_file="patches/odb_std14.patch"
         )
 
     def requirements(self):
@@ -134,10 +151,40 @@ class ODBRecipe(ConanFile):
 
     def package(self):
         if self.settings.os == "Windows":
+            # libodb
             copy(self, "*.dll", os.path.join(self.build_folder, "libodb-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
             copy(self, "*.lib", os.path.join(self.build_folder, "libodb-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
+            copy(self, "*.hxx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.ixx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.txx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.h", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+
+            # libodb-pgsql
             copy(self, "*.dll", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
             copy(self, "*.lib", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
-            copy(self, "*.exe", os.path.join(self.source_folder, "odb-2.4.0-i686-windows", "bin"), os.path.join(self.package_folder, "bin"))
+            copy(self, "*.hxx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.ixx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.txx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.h", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+
+            # odb compiler
+            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows", "doc"))
+            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows", "man"))
+            rm(self, "README", os.path.join(self.build_folder, "odb-2.4.0-i686-windows"))
+            copy(self, "odb-2.4.0-i686-windows*", self.build_folder, self.package_folder)
+            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows"))
+
+            # cmake modules
+            copy(self, "cmake*", self.source_folder, os.path.join(self.package_folder, "lib"))
         else:
             raise ValueError(f"Unsupported os: {self.settings.os}")
+
+    def package_info(self):
+        self.cpp_info.libs = ["odb", "odb-pgsql"]
+        self.cpp_info.builddirs = [self._cmake_install_base_path]
+
+        build_modules = [
+            os.path.join(self._cmake_install_base_path, "OdbTarget.cmake"),
+            os.path.join(self._cmake_install_base_path, "GenerateOdb.cmake")
+        ]
+        self.cpp_info.set_property("cmake_build_modules", build_modules)

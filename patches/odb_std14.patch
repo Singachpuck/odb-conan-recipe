@@ -1,0 +1,10 @@
+diff --git a/etc/odb/default.options b/etc/odb/default.options
+index f81a5ba..6f9cd70 100644
+--- a/etc/odb/default.options
++++ b/etc/odb/default.options
+@@ -6,3 +6,4 @@
+ #
+ # -I C:\boost_1_45_0
+ #
++--std c++14
+\ No newline at end of file
