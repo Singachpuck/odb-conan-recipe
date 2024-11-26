@@ -4,12 +4,11 @@ if(NOT TARGET odb::odbc)
     endif()
 
     if(NOT ODBC_PROGRAM)
-        # TODO: update according to the platform
-        find_program(ODBC_PROGRAM NAMES odb PATHS "${CMAKE_CURRENT_LIST_DIR}/../../../odb-2.4.0-i686-windows/bin")
+        find_program(ODBC_PROGRAM NAMES odb PATHS "${odb_compiler_PACKAGE_FOLDER_RELEASE}/bin")
     endif()
 
     if(NOT ODBC_PROGRAM)
-        message(SEND_ERROR "ODB compiler is not found!")
+        message(WARNING "ODB compiler is not found! Consider setting Odb_ODBC_EXECUTABLE.")
     endif()
 
     get_filename_component(ODBC_PROGRAM "${ODBC_PROGRAM}" ABSOLUTE)

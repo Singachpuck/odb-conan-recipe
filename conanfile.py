@@ -44,7 +44,8 @@ class PathBuilder:
 # TODO: Add configurable toolchain in the patches
 # TODO: Adapt to different db types via options
 # TODO: Adapt to different versions
-# TODO: Add with compiler option
+# TODO: Add with compiler option +
+# TODO: Add conandata.yaml
 class ODBRecipe(ConanFile):
     name = "odb"
     version = "2.4.0"
@@ -58,11 +59,42 @@ class ODBRecipe(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": True, "fPIC": True}
+    options = {"shared": [True, False], "fPIC": [True, False], "with_compiler": [True, False], "with_pgsql": [True, False]}
+    default_options = {"shared": True, "fPIC": True, "with_compiler": True, "with_pgsql": False}
 
     # Copy sources to the recipe
     exports_sources = "patches*", "cmake*"
+
+    _source_url_base = f"https://www.codesynthesis.com/download/odb/{version[:version.rfind(".")]}"
+
+    @property
+    def _libodb_source_dir(self):
+        return f"libodb-{self.version}"
+
+    @property
+    def _libodb_source_url(self):
+        return f"{self._source_url_base}/{self._libodb_source_dir}.zip"
+
+    @property
+    def _libodb_pgsql_source_dir(self):
+        return f"libodb-pgsql-{self.version}"
+
+    @property
+    def _libodb_pgsql_source_url(self):
+        return f"{self._source_url_base}/{self._libodb_pgsql_source_dir}.zip"
+
+    _odb_compiler_package_name = "odb_compiler"
+
+    @property
+    def _odb_compiler_package(self):
+        return f"{self._odb_compiler_package_name}/{self.version}"
+
+    _libpq_package_name = "libpq"
+    _libpq_package_version = "15.5"
+
+    @property
+    def _libpq_package(self):
+        return f"{self._libpq_package_name}/{self._libpq_package_version}"
 
     @property
     def _cmake_install_base_path(self):
@@ -70,120 +102,127 @@ class ODBRecipe(ConanFile):
 
     def config_options(self):
         if self.settings.os == "Windows":
-            self.options["libpq/15.5"].shared = True
             del self.options.fPIC
+    
+    def configure(self):
+        if self.options.with_pgsql:
+            self.options[self._libpq_package].shared = self.options.shared
 
     def source(self):
-        get(self, "https://www.codesynthesis.com/download/odb/2.4/libodb-2.4.0.zip")
-        get(self, "https://www.codesynthesis.com/download/odb/2.4/libodb-pgsql-2.4.0.zip")
-        get(self, "https://www.codesynthesis.com/download/odb/2.4/odb-2.4.0-i686-windows.zip")
-
-        libodb_pgsql_path = os.path.join(self.source_folder, "libodb-pgsql-2.4.0")
-        libodb_path = os.path.join(self.source_folder, "libodb-2.4.0")
-        odb_path = os.path.join(self.source_folder, "odb-2.4.0-i686-windows")
+        get(self, self._libodb_source_url)
+        libodb_path = os.path.join(self.source_folder, self._libodb_source_dir)
         patch(
             self,
             base_path=libodb_path,
             patch_file="patches/retarget-v143.patch"
         )
 
+        get(self, self._libodb_pgsql_source_url)
+        libodb_pgsql_path = os.path.join(self.source_folder, self._libodb_pgsql_source_dir)
         patch(
             self,
             base_path=libodb_pgsql_path,
             patch_file="patches/retarget-pgsql-v143.patch"
         )
 
-        patch(
-            self,
-            base_path=odb_path,
-            patch_file="patches/odb_std14.patch"
-        )
-
     def requirements(self):
-        self.requires("libpq/15.5")
+        if self.options.with_compiler:
+            self.requires(self._odb_compiler_package)
+        
+        if self.options.with_pgsql:
+            self.requires(self._libpq_package)
 
     def generate(self):
-        ms_build_home = get_msbuild_home()
-        # TODO: Write logs instead 
-        # print(ms_build_home)
+        if self.settings.os == "Windows":
+            ms_build_home = get_msbuild_home()
+            # TODO: Write logs instead 
+            # print(ms_build_home)
 
-        env = Environment()
-        env.append_path("PATH", ms_build_home)
-        envvars = env.vars(self, scope="build")
-        envvars.save_script("msbuild_env")
+            env = Environment()
+            env.append_path("PATH", ms_build_home)
+            envvars = env.vars(self, scope="build")
+            envvars.save_script("msbuild_env")
 
     def build(self):
         if self.settings.os == "Windows":
             msbuild = MSBuild(self)
-            msbuild.build("libodb-2.4.0/libodb-vc17.sln")
+            msbuild.build(f"{self._libodb_source_dir}/libodb-vc17.sln")
+            
+            if self.options.with_pgsql:
+                libpq_path = self.dependencies[self._libpq_package_name].package_folder
+                libodb_path = os.path.join(self.build_folder, self._libodb_source_dir)
 
-            libpq_path = self.dependencies["libpq"].package_folder
-            libodb_path = os.path.join(self.build_folder, "libodb-2.4.0")
+                print(libpq_path)
+                print(libodb_path)
 
-            includePath = PathBuilder().reset() \
-                .append_path("$(VC_IncludePath)") \
-                .append_path("$(WindowsSDK_IncludePath)") \
-                .append_path(libodb_path) \
-                .append_path(os.path.join(libpq_path, "include")) \
-                .build()
-            executePath = PathBuilder() \
-                .reset() \
-                .append_path("$(VC_ExecutablePath_x64)") \
-                .append_path("$(CommonExecutablePath)") \
-                .append_path(os.path.join(libodb_path, "bin64")) \
-                .append_path(os.path.join(libpq_path, "bin")) \
-                .build()
-            libPath = PathBuilder() \
-                .reset() \
-                .append_path("$(VC_LibraryPath_x64)") \
-                .append_path("$(WindowsSDK_LibraryPath_x64)") \
-                .append_path(os.path.join(libodb_path, "lib64")) \
-                .append_path(os.path.join(libpq_path, "lib")) \
-                .build()
+                includePath = PathBuilder().reset() \
+                    .append_path("$(VC_IncludePath)") \
+                    .append_path("$(WindowsSDK_IncludePath)") \
+                    .append_path(libodb_path) \
+                    .append_path(os.path.join(libpq_path, "include")) \
+                    .build()
+                executePath = PathBuilder() \
+                    .reset() \
+                    .append_path("$(VC_ExecutablePath_x64)") \
+                    .append_path("$(CommonExecutablePath)") \
+                    .append_path(os.path.join(libodb_path, "bin64")) \
+                    .append_path(os.path.join(libpq_path, "bin")) \
+                    .build()
+                libPath = PathBuilder() \
+                    .reset() \
+                    .append_path("$(VC_LibraryPath_x64)") \
+                    .append_path("$(WindowsSDK_LibraryPath_x64)") \
+                    .append_path(os.path.join(libodb_path, "lib64")) \
+                    .append_path(os.path.join(libpq_path, "lib")) \
+                    .build()
 
-            replace_in_file(self, "libodb-pgsql-2.4.0/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{includePath}}", includePath)
-            replace_in_file(self, "libodb-pgsql-2.4.0/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{executablePath}}", executePath)
-            replace_in_file(self, "libodb-pgsql-2.4.0/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{libraryPath}}", libPath)
+                replace_in_file(self, f"{self._libodb_pgsql_source_dir}/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{includePath}}", includePath)
+                replace_in_file(self, f"{self._libodb_pgsql_source_dir}/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{executablePath}}", executePath)
+                replace_in_file(self, f"{self._libodb_pgsql_source_dir}/odb/pgsql/libodb-pgsql-vc17.vcxproj", "{{libraryPath}}", libPath)
 
-            msbuild.build("libodb-pgsql-2.4.0/libodb-pgsql-vc17.sln")
+                msbuild.build(f"{self._libodb_pgsql_source_dir}/libodb-pgsql-vc17.sln")
         else:
             raise ValueError(f"Unsupported os: {self.settings.os}")
 
     def package(self):
         if self.settings.os == "Windows":
             # libodb
-            copy(self, "*.dll", os.path.join(self.build_folder, "libodb-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
-            copy(self, "*.lib", os.path.join(self.build_folder, "libodb-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
-            copy(self, "*.hxx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.ixx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.txx", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.h", os.path.join(self.build_folder, "libodb-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            copy(self, "*.dll", os.path.join(self.build_folder, f"{self._libodb_source_dir}", "bin64"), os.path.join(self.package_folder, "bin"))
+            copy(self, "*.lib", os.path.join(self.build_folder, f"{self._libodb_source_dir}", "lib64"), os.path.join(self.package_folder, "lib"))
 
             # libodb-pgsql
-            copy(self, "*.dll", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "bin64"), os.path.join(self.package_folder, "bin"))
-            copy(self, "*.lib", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "lib64"), os.path.join(self.package_folder, "lib"))
-            copy(self, "*.hxx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.ixx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.txx", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
-            copy(self, "*.h", os.path.join(self.build_folder, "libodb-pgsql-2.4.0", "odb"), os.path.join(self.package_folder, "include", "odb"))
+            if self.options.with_pgsql:
+                copy(self, "*.dll", os.path.join(self.build_folder, f"{self._libodb_pgsql_source_dir}", "bin64"), os.path.join(self.package_folder, "bin"))
+                copy(self, "*.lib", os.path.join(self.build_folder, f"{self._libodb_pgsql_source_dir}", "lib64"), os.path.join(self.package_folder, "lib"))
 
-            # odb compiler
-            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows", "doc"))
-            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows", "man"))
-            rm(self, "README", os.path.join(self.build_folder, "odb-2.4.0-i686-windows"))
-            copy(self, "odb-2.4.0-i686-windows*", self.build_folder, self.package_folder)
-            rmdir(self, os.path.join(self.build_folder, "odb-2.4.0-i686-windows"))
+            for ext in ["*.hxx", "*.ixx", "*.txx", "*.h"]:
+                copy(self, ext, os.path.join(self.build_folder, f"{self._libodb_source_dir}", "odb"), os.path.join(self.package_folder, "include", "odb"))
+                if self.options.with_pgsql:
+                    copy(self, ext, os.path.join(self.build_folder, f"{self._libodb_pgsql_source_dir}", "odb"), os.path.join(self.package_folder, "include", "odb"))
 
             # cmake modules
             copy(self, "cmake*", self.source_folder, os.path.join(self.package_folder, "lib"))
+            if self.options.with_compiler:
+                replace_in_file(self, os.path.join(self.package_folder, self._cmake_install_base_path, "OdbCompilerPath.cmake"),
+                    "${__odbc_path__}",
+                    self.dependencies[self._odb_compiler_package_name].package_folder.replace("\\", "/"))
         else:
             raise ValueError(f"Unsupported os: {self.settings.os}")
 
     def package_info(self):
-        self.cpp_info.libs = ["odb", "odb-pgsql"]
+        self.cpp_info.libs = ["odb"]
+
+        if self.options.with_pgsql:
+            self.cpp_info.libs.append("odb-pgsql")
+            
         self.cpp_info.builddirs = [self._cmake_install_base_path]
 
-        build_modules = [
+        build_modules = []
+
+        if self.options.with_compiler:
+            build_modules.append(os.path.join(self._cmake_install_base_path, "OdbCompilerPath.cmake"))
+        
+        build_modules += [
             os.path.join(self._cmake_install_base_path, "OdbTarget.cmake"),
             os.path.join(self._cmake_install_base_path, "GenerateOdb.cmake")
         ]
